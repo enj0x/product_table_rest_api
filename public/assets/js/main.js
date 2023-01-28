@@ -4,13 +4,11 @@
 
   // === DOM & VARS =======
   const DOM = {};
-
   DOM.module = document.querySelector('.m-table-products');
   DOM.tableProducts = DOM.module.querySelector('.table-products');
   DOM.tBody = DOM.tableProducts.querySelector('tbody');
   DOM.buttonAdd = DOM.module.querySelector('.button-add');
   DOM.templateRow = DOM.module.querySelector('template.row-product');
-
   DOM.modalAddEdit = DOM.module.querySelector('#modal-add-edit');
   DOM.formAddEdit = DOM.modalAddEdit.querySelector('.form-add-edit');
   DOM.inputId = DOM.modalAddEdit.querySelector('#input-id');
@@ -20,12 +18,10 @@
   DOM.inputPrice = DOM.modalAddEdit.querySelector('#input-price');
   DOM.buttonAddEdit = DOM.modalAddEdit.querySelector('.button-add-edit');
   DOM.spanLabels = Array.from(DOM.modalAddEdit.querySelectorAll('.span-label'));
-
-  
   DOM.modalDelete = DOM.module.querySelector('#modal-delete');
   DOM.strongId = DOM.modalDelete.querySelector('.strong-code');
   DOM.buttonConfirmDelete = DOM.modalDelete.querySelector('.button-confirm-delete');
-
+  
   const bsModalAddEdit = new bootstrap.Modal(DOM.modalAddEdit, {
     backdrop: 'static',
   });
@@ -39,18 +35,55 @@
 
     getProducts().then((data) => createRows(data));
 
-    //DOM.formAddEdit.addEventListener('submit', onSubmitAddEdit);
-    //DOM.buttonAdd.addEventListener('click', onClickAdd);
+    DOM.formAddEdit.addEventListener('submit', onSubmitAddEdit);
+    DOM.buttonAdd.addEventListener('click', onClickAddProduct);
     DOM.buttonConfirmDelete.addEventListener('click', onClickConfirmDelete);
   }
 
 
   // === EVENTHANDLER =====
+
+  const onClickAddProduct = (e) => {
+    const btnEl = e.currentTarget;
+    const label = btnEl.dataset.label;
+
+    showModalAddEdit(label, 'post');
+  };
+
+
+  const onSubmitAddEdit = (e) => {
+    e.preventDefault();
+    const formEl = e.currentTarget;
+    const method = formEl.dataset.method;
+    const product = {
+      productname: cleanFieldText(DOM.inputProductname.value),
+      description: cleanFieldText(DOM.textareaDescription.value),
+      quantity: Number(DOM.inputQuantity.value),
+      price: Number(DOM.inputPrice.value),
+    };
+
+    if (method.toLowerCase() === 'post') {
+      addProduct(product).then((data) => {
+        if (data.success) {
+          DOM.formAddEdit.reset();
+          bsModalAddEdit.hide();
+          getProducts().then((data) => createRows(data));
+        }
+      });
+    } else {
+      updateProduct(product).then((data) => {
+        if (data.success) {
+          DOM.formAddEdit.reset();
+          bsModalAddEdit.hide();
+          getProducts().then((data) => createRows(data));
+        }
+      });
+    }
+    }
+
   const onClickDelete = (e) => {
     const btnEl = e.currentTarget;
     const id = btnEl.dataset.id;
-    console.log('delete: ', id);
-
     showModalDelete(id);
   };
 
@@ -58,7 +91,6 @@
     const btnEl = e.currentTarget;
     const id = btnEl.dataset.id;
 
-    // async
     deleteProductByCode(id).then((data) => {
       if (data.success) {
         bsModalDelete.hide();
@@ -84,7 +116,7 @@
 
   const addProduct = (product) => {
     return new Promise((resolve, reject) => {
-      fetch('api/products', {
+      fetch('/addProduct', {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -92,13 +124,13 @@
         body: JSON.stringify(product),
       })
         .then((resp) => {
-          console.log(resp);
           return resp.json();
         })
         .then((data) => resolve(data))
         .catch((err) => console.error(err));
     });
   };
+
 
   const deleteProductByCode = (id) => {
     return new Promise((resolve, reject) => {
@@ -131,8 +163,8 @@
       const buttonDeleteEl = trEl.querySelector('.button-delete');
 
       trEl.querySelector('.td-id').textContent = id;
-      trEl.querySelector('.td-productname').textContent = description;
-      trEl.querySelector('.td-description').textContent = productname;
+      trEl.querySelector('.td-productname').textContent = productname;
+      trEl.querySelector('.td-description').textContent = description;
       trEl.querySelector('.td-quantity').textContent = quantity;
       trEl.querySelector('.span-price').textContent = Number(price).toFixed(2);
 
@@ -152,14 +184,15 @@
 
 
   const showModalAddEdit = (label = '', method = 'post') => {
-    DOM.inputCode.disabled = method === 'post' ? false : true;
+    //DOM.inputCode.disabled = method === 'post' ? false : true;
     if (method === 'post') DOM.formAddEdit.reset();
-
     DOM.spanLabels.forEach((spanEl) => {
       spanEl.textContent = label;
     });
     DOM.formAddEdit.dataset.method = method;
   };
+
+
 
 
   const showModalDelete = (id) => {
@@ -169,13 +202,17 @@
 
 
   const fillFormFields = (product) => {
-    const { code, tagline, shortdesc, quantity, price } = product;
+    const { id, productname, description, quantity, price } = product;
 
-    DOM.inputCode.value = code;
-    DOM.inputTagline.value = tagline;
+    DOM.inputId.value = code;
+    DOM.inputProductname.value = tagline;
     DOM.textareaDescription.value = shortdesc;
     DOM.inputQuantity.value = quantity;
     DOM.inputPrice.value = price;
+  };
+
+  const cleanFieldText = (text) => {
+    return text.replaceAll(',', '\\,');
   };
 
 
