@@ -1,0 +1,34 @@
+body {
+  background-color: #dfdfdf71;
+}
+
+h1 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 70px;
+}
+
+.list-products li.current {
+  background-color: salmon;
+
+}
+
+.list-products li.current a {
+
+  color: white;
+}
+
+.list-products li a {
+  color: #333;
+  text-decoration: none;
+  transition: all .4s ease-out;
+}
+
+/* Table Products */
+.m-table-pructs h2 {
+  margin: 2px;
+}
+
+.m-table-products .table-products .td-description {
+  max-width: 300px;
+}
+
