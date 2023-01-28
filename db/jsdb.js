@@ -15,34 +15,36 @@ db.connect((err) => {
     console.log('MySql Connected...')
   });
 
-const createProduct = (req, res, product) => {
-  product = {productName:'testProduct', description:'This is a test product', quantity: 5, price: 29.99};
-  let sql = 'INSERT INTO products SET ?';
-  let query = db.query(sql, post, (err, result) => {
-      if(err) throw err;
-      console.log(result);
-      res.send('Post 1 added...');
-  });
-};
-  
+
 const getProducts = (req, res) => {
   let sql = 'SELECT * FROM products';
-  let query = db.query(sql, (err, results) => {
+  db.query(sql, (err, results) => {
       if(err) throw err;
-      console.log('getProducts in jsdb wurde aufgerufen');
+      console.log('Produkte wurden geladen');
       res.send(results);
   });
 };
 
+
 const getProduct = (req, res, id) => {
     let sql = `SELECT * FROM products WHERE id = ${id}`;
-    let query = db.query(sql, (err, result) => {
+    db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        res.send('product sent...');
+        res.send(result);
     });
   };
 
+
+  const addProduct = (req, res) => {
+    let product = {productName:'testProduct', description:'This is a test product', quantity: 5, price: 29.99};
+    let sql = 'INSERT INTO products SET ?';
+    db.query(sql, product, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.send('product added...');
+    });
+  };
 //NOCH VERARBEITEN
 
   /*app.get('/updatepost/:id', (req, res, id) => {
@@ -55,13 +57,27 @@ const getProduct = (req, res, id) => {
       });
   });*/
   
-  const deleteProduct = (req, res, id) => {
-      let sql = `DELETE FROM products WHERE id = ${id}`;
-      let query = db.query(sql, (err, result) => {
-          if(err) throw err;
-          console.log(result);
-          res.send('Post deleted...');
-      });
+  const deleteProductById = (req, res, id) => {
+    let sql = `DELETE FROM products WHERE id = ${id}`;
+    db.query(sql, (err, result) => {
+      if(err) {
+        return res.status(500).send({
+          success: false,
+          msg: 'Something went wrong.',
+        });
+      } else {
+        console.log(`Produkt: ${id} deleted`,);
+        return res.send({
+          success: true,
+          msg: `Produkt: ${id} deleted`,
+        });
+      }
+    });
+
+        
+    
+    
+      
   };
 
 
@@ -69,8 +85,8 @@ const getProduct = (req, res, id) => {
 
 
 export default {
-  createProduct,
+  addProduct,
   getProducts,
   getProduct,
-  deleteProduct
+  deleteProductById
 };

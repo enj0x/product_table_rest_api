@@ -12,22 +12,23 @@ app.use(express.static('./public'));
 app.use(express.json()); //  
 
 
-app.get('/createProduct', (req, res) => {
-  jsdb.createProduct(req, res, product);
+app.post('/createProduct', (req, res) => {
+  jsdb.createProduct(req.body, res);
 })
 
 app.get('/getProducts', (req, res) => {
   jsdb.getProducts(req, res);
 })
 
-app.get('/getProduct/:idx', (req, res) => {
-  jsdb.getProduct(req, res, req.params.idx);
+app.get('/getProduct/:id', (req, res) => {
+  jsdb.getProduct(req, res, req.params.id);
 })
 
-app.get('/deleteProduct/:idx', (req, res) => {
-  jsdb.deleteProduct(req, res, req.params.idx);
-})
 
+app.delete('/product/:id', (req, res) => {
+    jsdb.deleteProductById(req, res, req.params.id);
+  
+    })
 
 
 

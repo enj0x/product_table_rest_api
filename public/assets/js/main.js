@@ -4,6 +4,7 @@
 
   // === DOM & VARS =======
   const DOM = {};
+
   DOM.module = document.querySelector('.m-table-products');
   DOM.tableProducts = DOM.module.querySelector('.table-products');
   DOM.tBody = DOM.tableProducts.querySelector('tbody');
@@ -12,16 +13,17 @@
 
   DOM.modalAddEdit = DOM.module.querySelector('#modal-add-edit');
   DOM.formAddEdit = DOM.modalAddEdit.querySelector('.form-add-edit');
-  DOM.inputId = DOM.modalAddEdit.querySelector('input[name=id]');
-  DOM.inputProductname = DOM.modalAddEdit.querySelector('input[name="productname"]');
-  DOM.textareaDescription = DOM.modalAddEdit.querySelector('textarea[name="shortdesc"]');
-  DOM.inputQuantity = DOM.modalAddEdit.querySelector('input[name="quantity"]');
-  DOM.inputPrice = DOM.modalAddEdit.querySelector('input[name="price"]');
+  DOM.inputId = DOM.modalAddEdit.querySelector('#input-id');
+  DOM.inputProductname = DOM.modalAddEdit.querySelector('#input-productname');
+  DOM.textareaDescription = DOM.modalAddEdit.querySelector('#textarea-description');
+  DOM.inputQuantity = DOM.modalAddEdit.querySelector('#input-quantity');
+  DOM.inputPrice = DOM.modalAddEdit.querySelector('#input-price');
   DOM.buttonAddEdit = DOM.modalAddEdit.querySelector('.button-add-edit');
   DOM.spanLabels = Array.from(DOM.modalAddEdit.querySelectorAll('.span-label'));
 
+  
   DOM.modalDelete = DOM.module.querySelector('#modal-delete');
-  DOM.strongCode = DOM.modalDelete.querySelector('.strong-code');
+  DOM.strongId = DOM.modalDelete.querySelector('.strong-code');
   DOM.buttonConfirmDelete = DOM.modalDelete.querySelector('.button-confirm-delete');
 
   const bsModalAddEdit = new bootstrap.Modal(DOM.modalAddEdit, {
@@ -31,6 +33,7 @@
     backdrop: 'static',
   });
 
+
   // === INIT =============
   const init = async () => {
 
@@ -38,11 +41,11 @@
 
     //DOM.formAddEdit.addEventListener('submit', onSubmitAddEdit);
     //DOM.buttonAdd.addEventListener('click', onClickAdd);
-    //DOM.buttonConfirmDelete.addEventListener('click', onClickConfirmDelete);
+    DOM.buttonConfirmDelete.addEventListener('click', onClickConfirmDelete);
   }
 
-  // === EVENTHANDLER =====
 
+  // === EVENTHANDLER =====
   const onClickDelete = (e) => {
     const btnEl = e.currentTarget;
     const id = btnEl.dataset.id;
@@ -50,6 +53,20 @@
 
     showModalDelete(id);
   };
+
+  const onClickConfirmDelete = (e) => {
+    const btnEl = e.currentTarget;
+    const id = btnEl.dataset.id;
+
+    // async
+    deleteProductByCode(id).then((data) => {
+      if (data.success) {
+        bsModalDelete.hide();
+        getProducts().then((data) => createRows(data));
+      }
+    });
+  };
+
 
   // === XHR/FETCH ========
   const getProducts = () => {
@@ -76,6 +93,22 @@
       })
         .then((resp) => {
           console.log(resp);
+          return resp.json();
+        })
+        .then((data) => resolve(data))
+        .catch((err) => console.error(err));
+    });
+  };
+
+  const deleteProductByCode = (id) => {
+    return new Promise((resolve, reject) => {
+      fetch(`/product/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'DELETE',
+      })
+        .then((resp) => {
           return resp.json();
         })
         .then((data) => resolve(data))
@@ -117,10 +150,34 @@
     });
   };
 
+
+  const showModalAddEdit = (label = '', method = 'post') => {
+    DOM.inputCode.disabled = method === 'post' ? false : true;
+    if (method === 'post') DOM.formAddEdit.reset();
+
+    DOM.spanLabels.forEach((spanEl) => {
+      spanEl.textContent = label;
+    });
+    DOM.formAddEdit.dataset.method = method;
+  };
+
+
   const showModalDelete = (id) => {
-    DOM.strongid.textContent = id;
+    DOM.strongId.textContent = id;
     DOM.buttonConfirmDelete.dataset.id = id;
   };
+
+
+  const fillFormFields = (product) => {
+    const { code, tagline, shortdesc, quantity, price } = product;
+
+    DOM.inputCode.value = code;
+    DOM.inputTagline.value = tagline;
+    DOM.textareaDescription.value = shortdesc;
+    DOM.inputQuantity.value = quantity;
+    DOM.inputPrice.value = price;
+  };
+
 
   init();
 
