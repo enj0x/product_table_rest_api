@@ -12,4 +12,4 @@
 - Vanilla JS
 - Bootstrap
 
-### Screenshots der UI im Ordner UI_Scrennshots zu finden
+### Screenshots des UI im Ordner UI_Scrennshots zu finden
