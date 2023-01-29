@@ -6,7 +6,7 @@
 
 ### Backend 
 - Node.js mit express
-- mySQL workbench
+- mySQL 
 
 ### Frontend
 - Vanilla JS
