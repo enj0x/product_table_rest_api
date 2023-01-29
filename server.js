@@ -12,18 +12,21 @@ app.use(express.static('./public'));
 app.use(express.json()); //  
 
 
-app.post('/addProduct', (req, res) => {
+app.post('/product', (req, res) => {
   jsdb.addProduct(req, res);
 })
 
-app.get('/getProducts', (req, res) => {
+app.get('/product', (req, res) => {
   jsdb.getProducts(req, res);
 })
 
-app.get('/getProduct/:id', (req, res) => {
-  jsdb.getProduct(req, res);
+app.get('/product/:id', (req, res) => {
+  jsdb.getProductById(req, res);
 })
 
+/*app.put('/product/:id', (req, res, id) => {
+
+})*/
 
 app.delete('/product/:id', (req, res) => {
     jsdb.deleteProductById(req, res);

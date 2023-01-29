@@ -1,11 +1,13 @@
 body {
-  background-color: #dfdfdf71;
+  background-color: #ffffff9b;
 }
 
 h1 {
   font-family: 'Bebas Neue', cursive;
   font-size: 70px;
+  margin-bottom: 5px;
 }
+
 
 .list-products li.current {
   background-color: salmon;
@@ -31,4 +33,5 @@ h1 {
 .m-table-products .table-products .td-description {
   max-width: 300px;
 }
+
 

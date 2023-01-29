@@ -26,7 +26,7 @@ const getProducts = (req, res) => {
 };
 
 
-const getProduct = (req, res) => {
+const getProductById = (req, res) => {
     let id = req.params.id;
     let sql = `SELECT * FROM products WHERE id = ${id}`;
     db.query(sql, (err, result) => {
@@ -47,6 +47,7 @@ const addProduct = (req, res) => {
       msg: 'Something went wrong.',
       })
     } else {
+      console.log('Product added');
       return res.status(500).send({
         success: true,
         msg: 'Product added',
@@ -55,41 +56,41 @@ const addProduct = (req, res) => {
   })     
 }
 
-//NOCH VERARBEITEN
-
-  /*app.get('/updatepost/:id', (req, res, id) => {
-      let newTitle = 'Updated Title';
-      let sql = `UPDATE products SET title = '${newTitle}' WHERE id = ${id}`;
-      let query = db.query(sql, (err, result) => {
-          if(err) throw err;
-          console.log(result);
-          res.send('Post updated...');
-      });
-  });*/
+const updateProductById = (req, res) => {
+  let id = req.params.id;
+  let newTitle = 'Updated Title';
+  let sql = `UPDATE products SET title = '${newTitle}' WHERE id = ${id}`;
+  let query = db.query(sql, (err, result) => {
+      if(err) throw err;
+      console.log(result);
+      res.send('Post updated...');
+  });
+}
   
-  const deleteProductById = (req, res) => {
-    let id = req.params.id;
-    let sql = `DELETE FROM products WHERE id = ${id}`;
-    db.query(sql, (err, result) => {
-      if(err) {
-        return res.status(500).send({
-          success: false,
-          msg: 'Something went wrong.',
-        });
-      } else {
-        console.log(`Produkt: ${id} deleted`,);
-        return res.send({
-          success: true,
-          msg: `Produkt: ${id} deleted`,
-        });
-      }
-    });
-  };
+const deleteProductById = (req, res) => {
+  let id = req.params.id;
+  let sql = `DELETE FROM products WHERE id = ${id}`;
+  db.query(sql, (err, result) => {
+    if(err) {
+      return res.status(500).send({
+        success: false,
+        msg: 'Something went wrong.',
+      });
+    } else {
+      console.log(`Produkt: ${id} deleted`,);
+      return res.send({
+        success: true,
+        msg: `Produkt: ${id} deleted`,
+      });
+    }
+  });
+};
 
   
 export default {
   addProduct,
   getProducts,
-  getProduct,
+  getProductById,
+  updateProductById,
   deleteProductById
 };
