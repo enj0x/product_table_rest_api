@@ -24,14 +24,13 @@ app.get('/product/:id', (req, res) => {
   jsdb.getProductById(req, res);
 })
 
-/*app.put('/product/:id', (req, res, id) => {
-
-})*/
+app.put('/product/:id', (req, res) => {
+  jsdb.updateProductById(req, res);
+})
 
 app.delete('/product/:id', (req, res) => {
-    jsdb.deleteProductById(req, res);
-  
-    })
+    jsdb.deleteProductById(req, res);  
+})
 
 
 

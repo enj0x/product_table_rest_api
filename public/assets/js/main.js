@@ -51,11 +51,26 @@
     const btnEl = e.currentTarget;
     const id = btnEl.dataset.id;
     const label = btnEl.dataset.label;
-    console.log('edit:', id);
-
     getProductByCode(id).then((data) => {
       fillFormFields(data);
       showModalAddEdit(label, 'put');
+    });
+  };
+
+  const onClickDelete = (e) => {
+    const btnEl = e.currentTarget;
+    const id = btnEl.dataset.id;
+    showModalDelete(id);
+  };
+
+  const onClickConfirmDelete = (e) => {
+    const btnEl = e.currentTarget;
+    const id = btnEl.dataset.id;
+    deleteProductByCode(id).then((data) => {
+      if (data.success) {
+        bsModalDelete.hide();
+        getProducts().then((data) => createRows(data));
+      }
     });
   };
 
@@ -64,6 +79,7 @@
     const formEl = e.currentTarget;
     const method = formEl.dataset.method;
     const product = {
+      id: cleanFieldText(DOM.inputId.value),
       productname: cleanFieldText(DOM.inputProductname.value),
       description: cleanFieldText(DOM.textareaDescription.value),
       quantity: Number(DOM.inputQuantity.value),
@@ -87,23 +103,6 @@
       });
     }
   }
-
-  const onClickDelete = (e) => {
-    const btnEl = e.currentTarget;
-    const id = btnEl.dataset.id;
-    showModalDelete(id);
-  };
-
-  const onClickConfirmDelete = (e) => {
-    const btnEl = e.currentTarget;
-    const id = btnEl.dataset.id;
-    deleteProductByCode(id).then((data) => {
-      if (data.success) {
-        bsModalDelete.hide();
-        getProducts().then((data) => createRows(data));
-      }
-    });
-  };
 
 
   // === XHR/FETCH ========
@@ -148,8 +147,9 @@
   };
 
   const updateProductByCode = (product) => {
+    const id = product.id;
     return new Promise((resolve, reject) => {
-      fetch('/product', {
+      fetch(`/product/${id}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -212,7 +212,6 @@
   };
 
   const fillFormFields = (product) => {
-    console.log(product[0]);
     const { id, productname, description, quantity, price } = product[0];
     DOM.inputId.value = id;
     DOM.inputProductname.value = productname;
