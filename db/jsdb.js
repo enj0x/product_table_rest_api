@@ -34,7 +34,8 @@ const getProductById = (req, res) => {
   };
 
 const addProduct = (req, res) => {
-  const product = req.body; 
+  const product = req.body;
+  Reflect.deleteProperty(product, 'id') 
   const sql = 'INSERT INTO products SET ?';
   db.query(sql, product, (err, result) => {
     if(err) {

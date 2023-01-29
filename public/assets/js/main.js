@@ -203,7 +203,6 @@
   };
 
   const showModalAddEdit = (label = '', method = 'post') => {
-    //DOM.inputCode.disabled = method === 'post' ? false : true;
     if (method === 'post') DOM.formAddEdit.reset();
     DOM.spanLabels.forEach((spanEl) => {
       spanEl.textContent = label;
