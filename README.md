@@ -1,7 +1,3 @@
-# product_table_rest_api
-- Entwickler: Jonas Entner
-- Entwicklungszeit: ca. 12 Stunden
-
 ## Techstack: 
 
 ### Backend 
